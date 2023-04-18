@@ -3,6 +3,10 @@ import { Mdx } from "./Mdx";
 
 export type Article = {
   id: string;
+  headings: {
+    depth: number;
+    value: string;
+  };
   frontmatter: {
     categories: Category["slug"][];
     title: string;

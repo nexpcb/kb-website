@@ -27,8 +27,8 @@ module.exports = {
     plugins: [
       `gatsby-plugin-sitemap`,
       'gatsby-plugin-typescript',
-      'gatsby-remark-slug',
       'gatsby-remark-images',
+      'gatsby-remark-slug',
       'gatsby-plugin-sharp',
       {
         resolve: 'gatsby-plugin-mdx',
