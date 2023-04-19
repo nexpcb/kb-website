@@ -28,22 +28,23 @@ module.exports = {
       `gatsby-plugin-sitemap`,
       'gatsby-plugin-typescript',
       'gatsby-remark-images',
-      'gatsby-remark-slug',
       'gatsby-plugin-sharp',
       {
         resolve: 'gatsby-plugin-mdx',
         options: {
-          gatsbyRemarkPlugins: ['gatsby-remark-slug',
-          {resolve: 'gatsby-remark-images',
-          options: {
-            maxWidth: 1035,
-            sizeByPixelDensity: true,
-            withWebp: true,
-            linkImagesToOriginal: false,
-            loading: "eager",
-          },
+          mdxOptions: {
+            remarkPlugins: [{
+              resolve: 'gatsby-remark-images',
+              options: {
+                maxWidth: 1035,
+                sizeByPixelDensity: true,
+                withWebp: true,
+                linkImagesToOriginal: false,
+                loading: "eager",
+              },
+            }],
+            rehypePlugins: []
           }
-        ],
         }
       },
       {

@@ -270,6 +270,7 @@ const mdxComponents = {
 export default function ({
   data,
   pageContext,
+  children
 }: {
   data: PageQueryData;
   pageContext: { basePath: string };
@@ -320,7 +321,7 @@ export default function ({
           {mdx.headings.length > 0 && (
           <TableOfContents headings={mdx.headings}/> )}
           <MDXProvider components={mdxComponents}>
-            <MDXRenderer headings={mdx.headings}>{mdx.body}</MDXRenderer>
+            {children}
           </MDXProvider>
           {relatedArticles.length > 0 && (
             <>

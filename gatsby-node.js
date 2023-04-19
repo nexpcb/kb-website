@@ -2,6 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { createFilePath } = require('gatsby-source-filesystem');
 
+const { compileMDXWithCustomOptions } = require(`gatsby-plugin-mdx`)
+const { remarkHeadingsPlugin } = require(`./remark-headings-plugin`)
+
 const DEFAULT_OPTIONS = {
   basePath: '/',
 };
@@ -50,7 +53,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 exports.sourceNodes = ({ actions }) => {
 };
 
-exports.createSchemaCustomization = ({ actions }) => {
+exports.createSchemaCustomization = ({ getNode, getNodesByType, pathPrefix, reporter, cache, actions, schema, store }) => {
   actions.createTypes(`
     type Category implements Node @dontInfer {
       id: ID!
@@ -62,6 +65,58 @@ exports.createSchemaCustomization = ({ actions }) => {
       image: String!
     }
   `);
+
+  const headingsResolver = schema.buildObjectType({
+    name: `Mdx`,
+    fields: {
+      headings: {
+        type: `[MdxHeading]`,
+        async resolve(mdxNode) {
+          const fileNode = getNode(mdxNode.parent)
+
+          if (!fileNode) {
+            return null
+          }
+
+          const result = await compileMDXWithCustomOptions(
+            {
+              source: mdxNode.body,
+              absolutePath: fileNode.absolutePath,
+            },
+            {
+              pluginOptions: {},
+              customOptions: {
+                mdxOptions: {
+                  remarkPlugins: [remarkHeadingsPlugin],
+                },
+              },
+              getNode,
+              getNodesByType,
+              pathPrefix,
+              reporter,
+              cache,
+              store,
+            }
+          )
+
+          if (!result) {
+            return null
+          }
+
+          return result.metadata.headings
+        }
+      }
+    }
+  })
+
+  actions.createTypes([`
+      type MdxHeading {
+        value: String
+        depth: Int
+      }
+    `,
+    headingsResolver,
+  ])
 }
 
 exports.createResolvers = ({ createResolvers }, options) => {
