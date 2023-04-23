@@ -1,7 +1,6 @@
 import React from 'react';
 import { graphql, Link } from 'gatsby';
 import { Breadcrumbs, Typography, Card, CardContent } from '@material-ui/core';
-import { MDXRenderer } from 'gatsby-plugin-mdx';
 import { MDXProvider } from '@mdx-js/react';
 import { Category } from '../types/Category';
 import { MdxArticle } from '../types/Article';
@@ -29,7 +28,6 @@ export const pageQuery = graphql`
   query($articleId: String) {
     mdx(id: { eq: $articleId }) {
       id
-      body
       headings {
         depth
         value
@@ -267,22 +265,13 @@ const mdxComponents = {
 
 };
 
-export default function ({
-  data,
-  pageContext,
-  children
-}: {
-  data: PageQueryData;
-  pageContext: { basePath: string };
-}) {
+export default function ArticleTemplate({ data, pageContext, children }) {
   const { basePath } = pageContext;
-  const {
-    mdx,
-    site: { siteMetadata },
-    allMdx,
-  } = data;
+  const { mdx, site: { siteMetadata }, allMdx } = data;
+
   const { frontmatter, fields } = mdx;
   const { title, description } = frontmatter;
+
   const categories = data.allCategory.nodes.filter((c) =>
     mdx.frontmatter.categories.includes(c.slug)
   );

@@ -50,8 +50,8 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   }
 };
 
-exports.sourceNodes = ({ actions }) => {
-};
+// exports.sourceNodes = ({ actions }) => {
+// };
 
 exports.createSchemaCustomization = ({ getNode, getNodesByType, pathPrefix, reporter, cache, actions, schema, store }) => {
   actions.createTypes(`
@@ -138,7 +138,7 @@ exports.createPages = async ({ actions, graphql, reporter }, options) => {
   // Create the index page
   createPage({
     path: basePath,
-    component: require.resolve('./src/home.tsx'),
+    component: path.resolve('./src/home.tsx'),
     context: {
       basePath,
     },
@@ -162,6 +162,9 @@ exports.createPages = async ({ actions, graphql, reporter }, options) => {
             frontmatter {
               title
             }
+            internal {
+              contentFilePath
+            }
           }
         }
       }
@@ -182,7 +185,7 @@ exports.createPages = async ({ actions, graphql, reporter }, options) => {
 
     createPage({
       path: `${basePath}categories/${slug}`,
-      component: require.resolve('./src/templates/category.tsx'),
+      component: path.resolve('./src/templates/category.tsx'),
       context: {
         categoryId: id,
         basePath,
@@ -191,10 +194,11 @@ exports.createPages = async ({ actions, graphql, reporter }, options) => {
   });
 
   // Create pages for each help center article
+  articleTemplate = path.resolve('./src/templates/article.tsx');
   articles.forEach(({ node }) => {
     createPage({
       path: node.fields.slug,
-      component: require.resolve('./src/templates/article.tsx'),
+      component: `${articleTemplate}?__contentFilePath=${node.internal.contentFilePath}`,
       context: {
         articleId: node.id,
         basePath,
